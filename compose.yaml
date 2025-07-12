@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+
+  server:
+    build:
+      context: ./cvmakerAPI
+    environment:
+      NODE_ENV: development
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: rootpassword
+      DB_NAME: cvmaker
+    ports:
+      - 9000:9000
+    volumes:
+      - ./cvmakerAPI:/usr/src/app
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0
+    container_name: cvmaker-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: cvmaker
+      MYSQL_USER: user
+      MYSQL_PASSWORD: userpassword
+    ports:
+      - 3306:3306
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: cvmaker-phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - 8080:80
+    depends_on:
+      - mysql
+
+volumes:
+  mysql-data:
